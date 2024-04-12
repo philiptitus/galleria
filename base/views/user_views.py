@@ -232,7 +232,7 @@ class GetUsersView(APIView):
         name = request.query_params.get('name')
 
         if name is not None:
-            users = users.filter(Q(username__icontains=name) | Q(email__icontains=name))
+            users = users.filter(Q(first_name__icontains=name) | Q(email__icontains=name))
 
             # Order the results so that the item with the searched username appears first
 
