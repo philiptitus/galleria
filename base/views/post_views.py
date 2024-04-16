@@ -220,14 +220,24 @@ class GetPostsView(APIView):
 
 
 class GetSlicesView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
+        user = request.user
+        following = user.following.all()
         # Retrieve posts where isSlice is True
-        qs = Post.objects.filter(isSlice=True)
+
+        if not following:
+            return Response({"detail": "You are not following anyone yet."})
         
+
+        vs = Post.objects.filter(user__in=following.values('following'), isSlice=True).order_by('-created_date')
+
+
         # Use Django REST framework's built-in pagination
         paginator = PageNumberPagination()
         paginator.page_size = 10  # Set the number of posts per page
-        result_page = paginator.paginate_queryset(qs, request)
+        result_page = paginator.paginate_queryset(vs, request)
         
         serializer = PostSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
@@ -368,7 +378,7 @@ class GetFeedView(APIView):
         notices.delete()
 
         if not following:
-            return Response({"message": "You are not following anyone yet."})
+            return Response({"detail": "You are not following anyone yet."})
 
         qs = Post.objects.filter(user__in=following.values('following'))
         vs = Post.objects.filter(user__in=following.values('following'), isSlice=True).order_by('-created_date')
