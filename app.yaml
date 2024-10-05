@@ -1,0 +1,15 @@
+runtime: python39
+entrypoint: gunicorn -b :$PORT backend.wsgi
+
+# This sample incurs costs to run on the App Engine flexible environment.
+# See https://cloud.google.com/appengine/pricing for details.
+
+handlers:
+- url: /static
+  static_dir: staticfiles
+
+- url: /.*
+  script: auto
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: "backend.settings"
