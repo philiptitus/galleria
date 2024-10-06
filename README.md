@@ -2,6 +2,9 @@
 
 Galleria is a dynamic social media platform where users can share images, videos, and posts, follow other users, and engage through comments, likes, and bookmarks. The platform is built with Django on the backend and React (with Redux) on the frontend, leveraging Django Rest Framework (DRF) for a fully RESTful API. Below you will find detailed instructions on how to install, set up, and contribute to this project.
 
+Did you Know Galleria Has a mobile version as well check it out here [Galleria-Mobile](https://mrphilip.pythonanywhere.com/portfolio/gallleria-mobile-version-beta) 
+
+
 ## Table of Contents
 1. [Features](#features)
 2. [Tech Stack](#tech-stack)
