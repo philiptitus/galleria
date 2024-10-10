@@ -202,12 +202,32 @@ class Follow(APIView):
                 'message': f'{follower.username} started following you.',
             })
 
+
+            o_message=f"{follower.username} Started Following You",
+            o_user = user,
+            o_type = 'Follow',
+
             notice = Notice.objects.create(
-                user=user,
-                message=f"{follower.username} Started Following You",
-                notification_type='follow',
+                user=o_user,
+                message=o_message,
+                notification_type=o_type
             )
+
+
+            # Fetch the Expo push token for the user
+            try:
+                expo_token = ExpoPushToken.objects.get(user=o_user).token
+                send_push_notification(expo_token, message={
+                    'title': o_type,
+                    'body': o_message,
+                })
+            except ExpoPushToken.DoesNotExist:
+                pass  # Handle the case where the token does not exist
+
+
             return Response('Now Following')
+
+
 
 from rest_framework.response import Response
 from django.db.models import Q
@@ -265,11 +285,28 @@ class GetUserById(APIView):
 
         if users == request.user:
             return Response(serializer.data)
+        o_message=f"{request.user.username} Viewed Your Profile",
+        o_user = users,
+        o_type = 'Account',
+
         notice = Notice.objects.create(
-                user=users,
-                message=f"{request.user.username} Viewed Your Profile",
-                notification_type='account',
-            )
+            user=o_user,
+            message=o_message,
+            notification_type=o_type
+        )
+
+
+        # Fetch the Expo push token for the user
+        try:
+            expo_token = ExpoPushToken.objects.get(user=o_user).token
+            send_push_notification(expo_token, message={
+                'title': o_type,
+                'body': o_message,
+            })
+        except ExpoPushToken.DoesNotExist:
+            pass  # Handle the case where the token does not exist
+
+
         return Response(serializer.data)
     
 
@@ -363,12 +400,30 @@ class RegisterUser(APIView):
 
             Follower.objects.create(user=user, follower=user)
 
+            o_message=f"Hi , {user.username}  Welcome To Galleria Hope You Enjoy The App",
+            o_type = 'Account',
+            o_user = user,
+
+
 
             notice = Notice.objects.create(
-                user=user,
-                message=f"Hi , {user.username}  Welcome To Galleria Hope You Enjoy The App",
-                notification_type='account',
-            )
+                        user=o_user,
+                        message=o_message,
+                        notification_type=o_type
+                    )
+
+
+            # Fetch the Expo push token for the user
+            try:
+                expo_token = ExpoPushToken.objects.get(user=o_user).token
+                send_push_notification(expo_token, message={
+                    'title': o_type,
+                    'body': o_message,
+                })
+            except ExpoPushToken.DoesNotExist:
+                pass  # Handle the case where the token does not exist
+
+
             email_body = f"Hi {user.first_name}, Welcome To Galleria The Best Social App ! Remember To Leave A Review On Your Experience."
             email_subject = "WELCOME HOME"
             to_email = user.email
@@ -385,7 +440,6 @@ class RegisterUser(APIView):
         serializer = UserSerializer(user, many=False)
         return Response(serializer.data)
     
-
 
 
 class VerifyUserEmail(GenericAPIView):
@@ -416,7 +470,6 @@ class GetUserProfile(APIView):
 
 
         return Response(serializer.data)
-    
 
 @permission_classes([IsAuthenticated])
 class UpdateUserProfile(APIView):
@@ -447,11 +500,30 @@ class UpdateUserProfile(APIView):
 
             user.password = make_password(data['password'])
 
+            o_message=f"Hi {user.username}, Your Password Was Changed If This Was NOt You Change It Immediately!",
+            o_user = user,
+            o_type = 'Account',
+
+
+
+
             notice = Notice.objects.create(
-                user=user,
-                message=f"Hi {user.username}, Your Password Was Changed If This Was NOt You Change It Immediately!",
-                notification_type='account',
+                user=o_user,
+                message=o_message,
+                notification_type=o_type
             )
+
+
+            # Fetch the Expo push token for the user
+            try:
+                expo_token = ExpoPushToken.objects.get(user=o_user).token
+                send_push_notification(expo_token, message={
+                    'title': o_type,
+                    'body': o_message,
+                })
+            except ExpoPushToken.DoesNotExist:
+                pass  # Handle the case where the token does not exist
+
 
         # Update user profile details
         user.first_name = data.get('name', user.first_name)
@@ -570,12 +642,32 @@ class FollowRequestAction(APIView):
                     'username': follow_request.requester.username,
                     'message': f'{follow_request.receiver.username} accepted your follow request.',
                 })
+                o_message=f"{follow_request.receiver.username} Accepted Your Follow Request",
+                o_user = follow_request.requester,
+                o_type = 'Follow',
+
+
+
+
+
 
                 notice = Notice.objects.create(
-                    user=follow_request.requester,
-                    message=f"{follow_request.receiver.username} Accepted Your Follow Request",
-                    notification_type='follow',
+                    user=o_user,
+                    message=o_message,
+                    notification_type=o_type
                 )
+
+                # Fetch the Expo push token for the user
+                try:
+                    expo_token = ExpoPushToken.objects.get(user=o_user).token
+                    send_push_notification(expo_token, message={
+                        'title': o_type,
+                        'body': o_message,
+                    })
+                except ExpoPushToken.DoesNotExist:
+                    pass  # Handle the case where the token does not exist
+
+
         elif action == 'decline':
             # Perform the requested action (decline)
             # Send a notification to the follower
@@ -583,11 +675,32 @@ class FollowRequestAction(APIView):
                 'username': follow_request.requester.username,
                 'message': f'{follow_request.receiver.username} declined your follow request.',
             })
+
+            o_message=f"{follow_request.receiver.username} Declined Your Follow Request",
+            o_user = follow_request.requester,
+            o_type = 'Follow',
+
+
+
             notice = Notice.objects.create(
-                user=follow_request.requester,
-                message=f"{follow_request.receiver.username} Declined Your Follow Request",
-                notification_type='follow',
+                user=o_user,
+                message=o_message,
+                notification_type=o_type
             )
+
+
+            # Fetch the Expo push token for the user
+            try:
+                expo_token = ExpoPushToken.objects.get(user=o_user).token
+                send_push_notification(expo_token, message={
+                    'title': o_type,
+                    'body': o_message,
+                })
+            except ExpoPushToken.DoesNotExist:
+                pass  # Handle the case where the token does not exist
+
+
+
 
         # Delete the FollowRequest instance (whether accepted or declined)
         follow_request.delete()

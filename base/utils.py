@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from .models import *
 import logging
+import requests
 
 def send_generated_otp_to_email(email, request): 
     subject = "One time passcode for Email verification"
@@ -104,3 +105,46 @@ def delete_file_from_supabase(bucket_name: str, file_path: str):
         error_messages = [item['error'] for item in res if 'error' in item]
         logger.error(f"Delete failed with error: {error_messages}")
         raise Exception(f"Delete failed with error: {error_messages}")
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#EXPO NOTIFICATIONS
+
+def send_push_notification(expo_token, message):
+    payload = {
+        'to': expo_token,
+        'sound': 'default',
+        'title': message['title'],
+        'body': message['body'],
+        'data': message.get('data', {}),
+    }
+
+    response = requests.post(
+        'https://exp.host/--/api/v2/push/send',
+        headers={
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        json=payload,
+    )
+
+    response_data = response.json()
+
+    if response_data.get('data', {}).get('status') == 'error':
+        if response_data.get('data', {}).get('details', {}).get('error') == 'DeviceNotRegistered':
+            # Delete the token from the database if it's no longer valid
+            ExpoPushToken.objects.filter(token=expo_token).delete()
+
+    return response_data

@@ -28,46 +28,6 @@ from django.db import transaction
 
 
 
-
-# class UploadVideo(APIView):
-#     parser_classes = (MultiPartParser, FormParser)
-
-#     @transaction.atomic
-#     def post(self, request):
-#         try:
-#             data = request.data
-
-#             post_id = data.get('post_id')
-#             post = Post.objects.get(id=post_id)
-
-#             vid = request.FILES.get('video')
-#             if vid is None:
-#                 raise ValidationError("No video file provided")
-
-#             self.validate_video_size(vid)
-
-
-#             # post_video = Video.objects.create(post=post, video=video_file)
-#             post.video = vid
-#             post.save()
-
-#             return Response({'detail': 'Video was uploaded successfully'})
-#         except ValidationError as e:
-#             error_message = "Validation Error: " + str(e)
-#             logger.error(f'Error uploading video: {error_message}')
-#             print(error_message)  # Print error to console
-#             return Response({'detail': error_message}, status=400)
-#         except Exception as e:
-#             error_message = "Internal Server Error: " + str(e)
-#             logger.error(f'Error uploading video: {error_message}')
-#             print(error_message)  # Print error to console
-#             return Response({'detail': error_message}, status=500)
-
-#     def validate_video_size(self, file):
-#         max_size = 419430400  # Maximum size in bytes (400 MB)
-#         if file.size > max_size:
-#             raise ValidationError("Maximum size for video is 400 MB")
-
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
@@ -122,25 +82,6 @@ class UploadVideo(APIView):
         max_size = 419430400  # Maximum size in bytes (400 MB)
         if file.size > max_size:
             raise ValidationError("Maximum size for video is 400 MB")
-
-
-class uploadImage(APIView):
-    parser_classes = (MultiPartParser, FormParser)
-
-    def post(self, request):
-        try:
-            data = request.data
-
-            post_id = data.get('post_id')
-            post = Post.objects.get(id=post_id)
-
-            post.image = request.FILES.get('image')
-            post.save()
-
-            return Response({'detail': 'Image was uploaded successfully'})
-        except Exception as e:
-            logger.error(f'Error uploading image: {str(e)}')
-            return Response({'detail': 'Internal Server Error'}, status=500)
 
 
 from base.utils import upload_file_to_supabase
@@ -274,7 +215,7 @@ class GetPost(APIView):
 
 from notifications.models import *
 
- 
+
 @permission_classes([IsAuthenticated])
 class LikePost(APIView):
     def post(self, request, pk):
@@ -295,12 +236,27 @@ class LikePost(APIView):
                 liker=liker,
                 post=post,
             )
+            o_message=f"{liker.username} liked your Post",
+            o_user = post.user,
+            o_type = 'like',
+
 
             notice = Notice.objects.create(
-                user=post.user,
-                message=f"{liker.username} liked your Post",
-                notification_type='like',
+                user=o_user,
+                message=o_message,
+                notification_type=o_type
             )
+
+            # Fetch the Expo push token for the user
+            try:
+                expo_token = ExpoPushToken.objects.get(user=o_user).token
+                send_push_notification(expo_token, message={
+                    'title': o_type,
+                    'body': o_message,
+                })
+            except ExpoPushToken.DoesNotExist:
+                pass  # Handle the case where the token does not exist
+
             return Response('Post Liked')
         
 
@@ -379,12 +335,27 @@ class createComment(APIView):
             post=post,
             message=comment_message
         )
+        o_message=f"{user.username} Added A comment Under your Post",
+        o_user = post.user,
+        o_type = 'comment',
 
         notice = Notice.objects.create(
-            user=post.user,
-            message=f"{user.username} Added A comment Under your Post",
-            notification_type='comment',
+            user=o_user,
+            message=o_message,
+            notification_type=o_type
         )
+
+
+        # Fetch the Expo push token for the user
+        try:
+            expo_token = ExpoPushToken.objects.get(user=o_user).token
+            send_push_notification(expo_token, message={
+                'title': o_type,
+                'body': o_message,
+            })
+        except ExpoPushToken.DoesNotExist:
+            pass  # Handle the case where the token does not exist
+
 
         return Response({'detail': 'Comment Saved'}, status=status.HTTP_201_CREATED)
 

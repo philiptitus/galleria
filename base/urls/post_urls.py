@@ -4,7 +4,6 @@ from ..views.post_views import  *
 
 urlpatterns = [
     path('', GetFeedView.as_view(), name='feed'),
-    path('upload/', uploadImage.as_view(), name='image-upload'),
     path('uploads/', UploadAlbum.as_view(), name='images-upload'),
     path('videos/', UploadVideo.as_view(), name='video-upload'),
     path('new/', createPost.as_view(), name='new-post'),

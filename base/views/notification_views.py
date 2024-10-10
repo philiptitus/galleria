@@ -235,3 +235,21 @@ class UsersEngagedInConversation(APIView):
         result_page = paginator.paginate_queryset(serialized_users, request)
 
         return paginator.get_paginated_response(result_page)
+    
+
+
+
+
+
+
+class RegisterPushTokenView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        token = request.data.get('token')
+        user = request.user
+
+        if token:
+            ExpoPushToken.objects.update_or_create(user=user, defaults={'token': token})
+            return Response({'message': 'Token registered successfully'}, status=status.HTTP_201_CREATED)
+
+        return Response({'error': 'Token not provided'}, status=status.HTTP_400_BAD_REQUEST)

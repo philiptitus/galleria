@@ -113,7 +113,21 @@ class Following(models.Model):
     following_avi = models.ImageField(null=True, blank=True, default='/meganfox.webp')
 
     def __str__(self):
-        
+        return self.following.email
+    
+    def save(self, *args, **kwargs):
+        if self.following:
+            self.following_name = self.following.username
+            self.custom_id = self.following.id
+            self.following_avi = self.following.avi
+        super().save(*args, **kwargs)
+
+    class Meta:
+        unique_together = ("user", "following")
+
+
+
+
 class Post(models.Model):
     caption = models.CharField(max_length=50)
     description = models.TextField(max_length=264)
@@ -145,19 +159,7 @@ class Video(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = "videos")
     video=models.URLField(null=True, blank=True)
 
-        
-return self.following.email
-    
-    def save(self, *args, **kwargs):
-        if self.following:
-            self.following_name = self.following.username
-            self.custom_id = self.following.id
-            self.following_avi = self.following.avi
-        super().save(*args, **kwargs)
-
-    class Meta:
-        unique_together = ("user", "following")
-
+     
 
 
 class FollowRequest(models.Model):
@@ -276,3 +278,17 @@ class OneTimePassword(models.Model):
 
     def __str__(self):
         return f"{self.user.first_name} - otp code"
+
+
+
+
+
+
+
+class ExpoPushToken(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    token = models.CharField(max_length=255)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.token
