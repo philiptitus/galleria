@@ -148,3 +148,42 @@ def send_push_notification(expo_token, message):
             ExpoPushToken.objects.filter(token=expo_token).delete()
 
     return response_data
+
+
+
+
+
+
+# COGNITO INTEGRATION
+
+
+import base64
+import requests
+
+from django.conf import settings
+
+
+def getTokens(code):
+    TOKEN_ENDPOINT = settings.OAUTH_TOKEN_ENDPOINT
+    REDIRECT_URI = settings.OAUTH_REDIRECT_URI
+    CLIENT_ID = settings.OAUTH_CLIENT_ID
+    CLIENT_SECRET = settings.OAUTH_CLIENT_SECRET
+
+    encodeData = base64.b64encode(bytes(f"{CLIENT_ID}:{CLIENT_SECRET}", "utf-8")).decode("ascii")
+
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": f"Basic {encodeData}"
+    }
+
+    body = {
+        "grant_type": "authorization_code",
+        "client_id": CLIENT_ID,
+        "code": code,
+        "redirect_uri": REDIRECT_URI
+    }
+
+    response = requests.post(TOKEN_ENDPOINT, data=body, headers=headers)
+
+    # Handle response and return tokens
+    # ...

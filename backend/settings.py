@@ -269,3 +269,19 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
+
+
+REDIRECT_URI = os.getenv('REDIRECT_URI')   # Replace with your bucket name
+TOKEN_ENDPOINT = os.getenv('TOKEN_ENDPOINT')   # Replace with your bucket name
+CLIENT_ID = os.getenv('CLIENT_ID')   # Replace with your bucket name
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')   # Replace with your bucket name
+USER_POOL_ID = os.getenv('USER_POOL_ID')   # Replace with your bucket name
+COGNITO_REGION_NAME = os.getenv('COGNITO_REGION_NAME')   # Replace with your bucket name
+
+
+
+
+
+
