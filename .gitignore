@@ -1,0 +1,46 @@
+# General
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+*.env
+
+# Django
+*.db
+__pycache__/
+db.sqlite3
+media/
+staticfiles/
+*.py[cod]
+*.so
+
+# Virtualenv
+venv/
+env/
+ENV/
+.venv/
+bin/
+lib/
+lib64/
+include/
+*.lock
+
+
+# React (frontend)
+galleria-python/frontend/node_modules/
+galleria-python/frontend/.next/
+galleria-python/frontend/.cache/
+galleria-python/frontend/.parcel-cache/
+galleria-python/frontend/dist/
+galleria-python/frontend/build/
+galleria-python/frontend/coverage/
+galleria-python/frontend/.env
+galleria-python/frontend/*.log
+galleria-python/frontend/.DS_Store
+
+# MacOS specific files
+.DS_Store
+
+# Windows specific files
+Thumbs.db
