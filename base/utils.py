@@ -47,7 +47,7 @@ from supabase import create_client, Client
 # Supabase configuration
 SUPABASE_URL = settings.SUPABASE_URL  # Replace with your Supabase URL
 SUPABASE_KEY = settings.SUPABASE_KEY  # Replace with your Supabase Key
-BUCKET_NAME = settings.BUCKET_NAME  # Replace with your bucket name
+BUCKET_NAME = "Galleria"  # Replace with your bucket name
 
 # Initialize the Supabase client
 def init_supabase() -> Client:

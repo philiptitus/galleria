@@ -32,6 +32,9 @@ function PostScreen() {
     const postDelete = useSelector((state) => state.postDelete);
     const { success } = postDelete;
 
+    const postUpdate = useSelector((state) => state.postUpdate);
+    const { loading:loadingUpdate, error:errorUpdate, success:successUpdate } = postUpdate;
+
     const userLogin = useSelector(state => state.userLogin);
     const { userInfo } = userLogin;
     const formatTimestamp = (timestamp) => {
@@ -116,7 +119,11 @@ function PostScreen() {
       if (userInfo) {
         dispatch(listPostDetails(id));
       }
-    }, [dispatch, id, success, successPost, successCreate, userInfo]);
+
+      if (successUpdate) {
+        dispatch(listPostDetails(id));
+      }
+    }, [dispatch, id, success, successPost, successCreate, userInfo, successUpdate]);
     
 
 
