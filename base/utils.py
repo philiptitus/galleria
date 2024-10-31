@@ -54,31 +54,31 @@ def init_supabase() -> Client:
     client = create_client(SUPABASE_URL, SUPABASE_KEY)
     return client
 
-# Function to upload a file to Supabase bucket
+import random
+
+# Function to upload a file to Supabase bucket with a random prefix to avoid duplicates
 def upload_file_to_supabase(file, bucket_name: str, destination_path: str):
     supabase = init_supabase()
 
-    # Get the MIME type of the file based on its extension
+    # Generate a random prefix between 1 and 10,000
+    random_prefix = random.randint(1, 10000)
+    destination_path = f"{random_prefix}_{destination_path}"
+
+    # Determine the MIME type based on file extension, defaulting if necessary
     mime_type, _ = mimetypes.guess_type(file.name)
+    mime_type = mime_type or 'application/octet-stream'
 
-    # Default to 'application/octet-stream' if the MIME type cannot be determined
-    if mime_type is None:
-        mime_type = 'application/octet-stream'
-
-    # Read the file content
+    # Read the file content and upload to the specified bucket
     file_content = file.read()
-
     bucket = supabase.storage.from_(bucket_name)
     res = bucket.upload(destination_path, file_content, file_options={"content-type": mime_type})
 
-    # Check for successful upload by status code or data presence
-    if res.status_code == 200:  # Check for success (or adjust based on response status)
+    # Check for upload success and return public URL if successful
+    if res.status_code == 200:
         public_url = bucket.get_public_url(destination_path)
         return public_url
     else:
-        raise Exception(f"Upload failed with error: {res.json()}")  # Use .json() to inspect the error
-
-
+        raise Exception(f"Upload failed with error: {res.json()}")
 
 
 
