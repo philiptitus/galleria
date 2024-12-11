@@ -21,7 +21,9 @@ dataclasses
 deprecation
 Django
 django-cors-headers
+django-channels-jwt-auth-middleware
 django-storages
+django_user_agents
 djangorestframework
 djangorestframework-simplejwt
 Faker

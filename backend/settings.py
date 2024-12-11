@@ -45,12 +45,16 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
     'base.apps.BaseConfig',
     'notifications',
     'django_user_agents',
+    'channels',
+    'daphne',
+    'django.contrib.staticfiles',
+
+
 ]
 
 
@@ -61,6 +65,19 @@ REST_FRAMEWORK = {
 }
 
 
+
+# Daphne
+ASGI_APPLICATION = 'backend.asgi.application'
+
+#channels
+CHANNEL_LAYERS = {
+	'default': {
+		'BACKEND': 'channels_redis.core.RedisChannelLayer',
+		'CONFIG': {
+			'hosts': [('127.0.0.1', 6379)]
+		}
+	}
+}
 
 
 from datetime import timedelta
@@ -277,3 +294,11 @@ if SITE_UNDER_CONSTRUCTION == True:
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000  # or a higher number based on your requirements
 
 
+
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}

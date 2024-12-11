@@ -1,0 +1,3 @@
+PACKAGE ISSUES:
+After running pip install -r requirements.txt,
+do this run pip install supabase everything should be fine.

@@ -16,6 +16,7 @@ import {
 } from './reducers/postReducers'
 import { notificationListReducer, conversationListReducer,
 chatCreateReducer, messageDeleteReducer } from './reducers/notificationReducers'
+import { websocketReducer } from './reducers/realtime'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { 
     userLoginReducer,
@@ -72,6 +73,7 @@ const reducer = combineReducers(
         chatCreate:chatCreateReducer,
         messageDelete:messageDeleteReducer,
 
+        websocket: websocketReducer
 
     }
 )
