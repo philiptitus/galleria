@@ -1,4 +1,4 @@
-import utils from "./utils"
+import utils from "../core/utils"
 
 
 async function set(key, object) {

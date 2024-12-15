@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import Footer from '../components/Footer';
 import Carousel from '../components/Carousel';
 import { logout } from '../actions/userAction'
+import { connectWebsocket, disconnectWebsocket } from '../actions/realActions'; // Correct import path
 
 
 
@@ -38,13 +39,49 @@ function Home() {
 
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
+  const websocket = useSelector((state) => state.websocket); // Access the websocket state from the store
+  const isConnected = websocket.connected;
+  const socket = websocket.socket; // Get the actual socket instance
 
+
+//   useEffect(() => {
+//     if (socket) {
+//         socket.onmessage = (event) => {
+//             // Handle incoming messages here
+//             const receivedMessage = JSON.parse(event.data);
+//             console.log("Received message:", receivedMessage);
+
+//              // Example: dispatch action based on the received message
+//              dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: receivedMessage });
+//         };
+//     }
+// }, [socket, dispatch]);  // Re-run this effect if the socket instance changes
+
+
+
+useEffect(() => {
+  if (userInfo) {  // Connect only if user is logged in
+      dispatch(connectWebsocket());
+  }
+
+  return () => {
+    dispatch(disconnectWebsocket()); // Disconnect when the component unmounts
+  };
+}, [dispatch, userInfo]); // Include userInfo in the dependency array
 
 
   const [hasExpired, setHasExpired] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const expirationTime = userInfo?.expiration_time
+
+
+
+
+
+
+
+
 
 
 
