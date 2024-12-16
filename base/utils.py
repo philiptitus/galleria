@@ -73,8 +73,9 @@ def upload_file_to_supabase(file, bucket_name: str, destination_path: str):
     bucket = supabase.storage.from_(bucket_name)
     res = bucket.upload(destination_path, file_content, file_options={"content-type": mime_type})
 
+    print(res)
     # Check for upload success and return public URL if successful
-    if res.status_code == 200:
+    if res.full_path:
         public_url = bucket.get_public_url(destination_path)
         return public_url
     else:

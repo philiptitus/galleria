@@ -7,8 +7,7 @@ export const connectWebsocket = () => {
         try {
             const tokens = await secure.get('userInfo');
             const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const newSocket = new WebSocket(`http://127.0.0.1:8000/chat/?token=${tokens.access}`, tokens.access);
-
+            const newSocket = new WebSocket(`${wsProtocol}//127.0.0.1:8000/chat/?token=${tokens.access}`);
 
             dispatch({ type: 'WEBSOCKET_CONNECT', payload: newSocket });  // Use constant
 
@@ -26,7 +25,7 @@ export const connectWebsocket = () => {
 
             newSocket.onerror = (error) => {
                 dispatch({ type: 'WEBSOCKET_ERROR', payload: error });
-                console.log("A Socket Error" + error.message)
+                console.log("A Socket Error: " + error.message)
 
             };
 
