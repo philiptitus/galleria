@@ -9,7 +9,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
-
+import { connectWebsocket, disconnectWebsocket } from '../actions/realActions'; // Correct import path
+import { sendChat } from '../actions/realActions';
 import { logout } from '../actions/userAction';
 import { Link, useParams } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -64,6 +65,19 @@ function UserChatScreen() {
 
   const expirationTime = userInfo?.expiration_time
 
+  const websocket = useSelector((state) => state.websocket); // Access the websocket state from the store
+  const isConnected = websocket.connected;
+  const socket = websocket.socket; // Get the actual socket instance
+
+useEffect(() => {
+  if (userInfo) {  // Connect only if user is logged in
+      dispatch(connectWebsocket());
+  }
+
+  return () => {
+    dispatch(disconnectWebsocket()); // Disconnect when the component unmounts
+  };
+}, [dispatch, userInfo]); // Include userInfo in the dependency array
 
 
   useEffect(() => {
@@ -137,10 +151,10 @@ function UserChatScreen() {
       fetchData();
 
       // Set up interval to call fetchData every 1 second
-      const intervalId = setInterval(fetchData, 1000);
+      // const intervalId = setInterval(fetchData, 1000);
 
       // Clear the interval on component unmount to avoid memory leaks
-      return () => clearInterval(intervalId);
+      // return () => clearInterval(intervalId);
     }
   }, [page, searchText, userInfo]);
 
@@ -181,7 +195,7 @@ function UserChatScreen() {
   const submitHandler = () => {
 
     dispatch(
-      createChat({
+      sendChat({
         receiver_id,
         content,
       })

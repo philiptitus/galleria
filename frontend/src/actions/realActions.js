@@ -1,5 +1,6 @@
 import secure from './secure';  // Correct import
 
+import { CHAT_CREATE_REQUEST, CHAT_CREATE_SUCCESS, CHAT_CREATE_FAIL } from '../constants/notificationConstants'; // Import your constants
 
 // Action Creators
 export const connectWebsocket = () => {
@@ -68,3 +69,26 @@ export const disconnectWebsocket = () => {
 //   };
 // };
 
+
+
+// If you'll send messages
+
+
+export const sendChat = (chat) => {
+    return (dispatch, getState) => {
+        const socket = getState().websocket.socket; // Get the socket from the Redux store
+        dispatch({ type: CHAT_CREATE_REQUEST }); // Dispatch request action
+
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            try {
+                socket.send(JSON.stringify({ source: 'create_chat', chat })); // Send the chat data with a type identifier
+                dispatch({ type: CHAT_CREATE_SUCCESS, payload: chat }); //Dispatch success action
+            } catch (error) {
+                dispatch({ type: CHAT_CREATE_FAIL, payload: error }); //Dispatch fail action
+            }
+        } else {
+            dispatch({ type: CHAT_CREATE_FAIL, payload: 'WebSocket not connected' }); // Dispatch fail if socket is not open
+            console.error('WebSocket not open. Cannot send chat message.');
+        }
+    };
+};
