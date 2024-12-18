@@ -36,6 +36,11 @@ export const connectWebsocket = () => {
 
             };
 
+            newSocket.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                dispatch(receiveChatMessage(message.message)); // Dispatch the new action
+            };
+
 
         } catch (error) {
             dispatch({ type: 'WEBSOCKET_ERROR', payload: error });
@@ -92,3 +97,10 @@ export const sendChat = (chat) => {
         }
     };
 };
+
+
+
+export const receiveChatMessage = (message) => ({
+    type: 'RECEIVE_CHAT_MESSAGE',
+    payload: message,
+  });

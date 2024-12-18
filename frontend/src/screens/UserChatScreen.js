@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
-import { connectWebsocket, disconnectWebsocket } from '../actions/realActions'; // Correct import path
+import { connectWebsocket, disconnectWebsocket, receiveChatMessage } from '../actions/realActions'; // Correct import path
 import { sendChat } from '../actions/realActions';
 import { logout } from '../actions/userAction';
 import { Link, useParams } from 'react-router-dom';
@@ -25,8 +25,9 @@ import axios from 'axios'
 
 
 function UserChatScreen() {
+  const conversations = useSelector((state) => state.websocket.messages); // Messages from Redux store
 
-  const [conversations, setConversations] = useState([]);
+  // const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState('');
@@ -124,40 +125,55 @@ useEffect(() => {
           }, [navigate, hasExpired]);
 
 
-  useEffect(() => {
-    if (userInfo) {
-      const fetchData = async () => {
-        try {
-          const config = {
-            headers: {
-              'Content-type': 'application/json',
-              Authorization: `Bearer ${userInfo.token}`,
-            },
-          };
-          setLoading(true);
-          const response = await axios.get(`/api/notifications/chats/${id}/?name=${searchText}&page=${page}`, config);
-          setConversations(response.data.results);
-          setTotalPages(response.data.total_pages);
-        } catch (error) {
-          console.error('Error fetching posts:', error);
-        } finally {
-          setLoading(false);
-          setLoading2(false);
+          useEffect(() => {
+            if (userInfo) {
+                const fetchData = async () => {
+                    try {
+                        setLoading(true);
+                        const config = {
+                            headers: {
+                                'Content-type': 'application/json',
+                                Authorization: `Bearer ${userInfo.token}`,
+                            },
+                        };
+                        const response = await axios.get(`/api/notifications/chats/${id}/?name=${searchText}&page=${page}`, config);
+                        dispatch(receiveChatMessage({ type: "INITIAL_MESSAGES", payload: response.data.results }));
+                        setTotalPages(response.data.total_pages);
+                        console.log('Combined messages from Redux:', conversations);
 
+                    } catch (error) {
+                        console.error('Error fetching posts:', error);
+                    } finally {
+                        setLoading(false);
+                        setLoading2(false);
+                    }
+                };
+                fetchData();
+            }
+        }, [page, searchText, userInfo]); //Only run when these change
+        
+
+      //   useEffect(() => {
+      //     //Combine initial messages with the messages from Redux ONLY when loading is false
+      //     if (!loading && userInfo && conversations.length > 0) {
+      //         const combinedMessages = [...conversations, ...messagesFromRedux];
+      //         setConversations(combinedMessages);
+      //     }
+      // }, [messagesFromRedux, loading, userInfo, conversations]); // Only run when these change
+      
+      useEffect(() => {
+        if (socket && isConnected) {
+            socket.onmessage = (event) => {
+                const incomingMessage = JSON.parse(event.data).message;
+                dispatch(receiveChatMessage(incomingMessage));
+            };
         }
-      };
-
-      // Call fetchData immediately
-      fetchData();
-
-      // Set up interval to call fetchData every 1 second
-      // const intervalId = setInterval(fetchData, 1000);
-
-      // Clear the interval on component unmount to avoid memory leaks
-      // return () => clearInterval(intervalId);
-    }
-  }, [page, searchText, userInfo]);
-
+        return () => {
+            if (socket) {
+                socket.onmessage = null;
+            }
+        };
+    }, [socket, isConnected, dispatch]);
   const handleLoadMore = () => {
     // Increment the page to fetch the next set of posts
     setPage((prevPage) => prevPage + 1);
