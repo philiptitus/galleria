@@ -299,100 +299,105 @@ useEffect(() => {
         <div className="list-group list-group-flush border-bottom scrollarea" ref={messageListRef}>
           <div ref={pusherNotificationsRef}></div>
 
-          {conversations.map((msg, index) => (
+          {conversations.map((msg, index) => {
+  if (!msg || !msg.sender) {
+    return null; // Skip rendering if msg or msg.sender is undefined
+  }
 
-<div
-  key={index}
-  style={{
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: userInfo.id === msg.sender ? 'flex-end' : 'flex-start',
-    margin: '10px 0'
-  }}
->
-  <div
-    style={{
-      backgroundColor: userInfo.id === msg.sender ? '#e0f7fa' : '#f1f1f1',
-      color: '#000',
-      borderRadius: '20px',
-      padding: '10px 20px',
-      maxWidth: '75%',
-      alignSelf: userInfo.id === msg.sender ? 'flex-end' : 'flex-start',
-      wordWrap: 'break-word', // Ensures long words break and the div expands
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Adds a subtle shadow
-    }}
-  >
+  return (
     <div
+      key={index}
       style={{
         display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
+        flexDirection: 'column',
+        alignItems: userInfo.id === msg.sender ? 'flex-end' : 'flex-start',
+        margin: '10px 0'
       }}
     >
-      <p
+      <div
         style={{
-          fontSize: 'small',
-          color: userInfo.email === msg.name ? 'red' : 'blue',
-          margin: 0 // Removes default margin
+          backgroundColor: userInfo.id === msg.sender ? '#e0f7fa' : '#f1f1f1',
+          color: '#000',
+          borderRadius: '20px',
+          padding: '10px 20px',
+          maxWidth: '75%',
+          alignSelf: userInfo.id === msg.sender ? 'flex-end' : 'flex-start',
+          wordWrap: 'break-word', // Ensures long words break and the div expands
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Adds a subtle shadow
         }}
       >
-        {userInfo.email === msg.name ?
-        <i
+        <div
           style={{
-            fontSize: 'small',
-            color: userInfo.email === msg.name ? 'red' : 'blue'
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}
         >
-          Me
-        </i> :
-        <span>{msg.name}</span>
-        }
-      </p>
-      <strong
-        style={{
-          fontSize: 'x-small',
-          color: '#555'
-        }}
-      >
-        {formatTimestamp(msg.timestamp)}
-      </strong>
-      <div>
-        {!msg.is_read && userInfo.id === msg.sender && (
-          <DeleteIcon
+          <p
             style={{
-              cursor: 'pointer',
-              marginLeft: '10px',
-              color: 'red'
+              fontSize: 'small',
+              color: userInfo.email === msg.name ? 'red' : 'blue',
+              margin: 0 // Removes default margin
             }}
-            onClick={() => handleDelete(msg.id)}
-          />
-        )}
-        {msg.is_read && userInfo.id === msg.sender && (
-          <VisibilityIcon
+          >
+            {userInfo.email === msg.name ? (
+              <i
+                style={{
+                  fontSize: 'small',
+                  color: userInfo.email === msg.name ? 'red' : 'blue'
+                }}
+              >
+                Me
+              </i>
+            ) : (
+              <span>{msg.name}</span>
+            )}
+          </p>
+          <strong
             style={{
-              cursor: 'pointer',
-              marginLeft: '10px',
-              color: 'blue'
+              fontSize: 'x-small',
+              color: '#555'
             }}
-          />
-        )}
+          >
+            {formatTimestamp(msg.timestamp)}
+          </strong>
+          <div>
+            {!msg.is_read && userInfo.id === msg.sender && (
+              <DeleteIcon
+                style={{
+                  cursor: 'pointer',
+                  marginLeft: '10px',
+                  color: 'red'
+                }}
+                onClick={() => handleDelete(msg.id)}
+              />
+            )}
+            {msg.is_read && userInfo.id === msg.sender && (
+              <VisibilityIcon
+                style={{
+                  cursor: 'pointer',
+                  marginLeft: '10px',
+                  color: 'blue'
+                }}
+              />
+            )}
+          </div>
+        </div>
+        <div
+          style={{
+            whiteSpace: 'pre-line',
+            overflow: 'hidden',
+            marginTop: '5px' // Adds a small gap between the header and the content
+          }}
+        >
+          <Typography variant="body2" component="div">
+            {msg.content}
+          </Typography>
+        </div>
       </div>
     </div>
-    <div
-      style={{
-        whiteSpace: 'pre-line',
-        overflow: 'hidden',
-        marginTop: '5px' // Adds a small gap between the header and the content
-      }}
-    >
-      <Typography variant="body2" component="div">
-        {msg.content}
-      </Typography>
-    </div>
-  </div>
-</div>
-
-))}
+  );
+})}
 
 {/* {
 

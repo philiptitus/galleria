@@ -9,7 +9,6 @@ attrs
 authy
 better-profanity
 boto3
-botocore
 certifi
 cffi
 channels
@@ -82,3 +81,4 @@ websockets
 whitenoise
 yarl
 python-dotenv
+daphne
