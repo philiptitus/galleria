@@ -48,8 +48,8 @@ from django.db.models import Q
 
 
 class Message(models.Model):
-    sender = models.ForeignKey('base.CustomUser', on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey('base.CustomUser', on_delete=models.CASCADE, related_name='received_messages')
+    sender = models.ForeignKey('base.CustomUser', on_delete=models.CASCADE, related_name='sent_messages',blank=True, null=True)
+    receiver = models.ForeignKey('base.CustomUser', on_delete=models.CASCADE, related_name='received_messages', blank=True, null=True)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)

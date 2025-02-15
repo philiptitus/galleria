@@ -102,6 +102,7 @@ class CustomUser(AbstractUser):
 
     auth_provider=models.CharField(max_length=50, blank=False, null=False, default=AUTH_PROVIDERS.get('email'))
 
+    active_connections = models.JSONField(default=list, blank=True, null=True) #This is the crucial addition
 
     objects = CustomUserManager()
     user_permissions = models.ManyToManyField(Permission, verbose_name='user permissions', blank=True)
