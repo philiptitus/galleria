@@ -82,11 +82,21 @@ function UserConversationsScreen() {
     }
   }, [userInfo, page, searchText, enqueueSnackbar]);
 
-  // Update local conversations state with realtime updates from the websocket,
-  // if available. You can merge these updates with your API results as needed.
+  // Merge realtime conversation updates with the existing HTTP-fetched list
   useEffect(() => {
     if (wsConversations && wsConversations.length > 0) {
-      setConversations(wsConversations);
+      setConversations((prevConversations) => {
+        let updatedConversations = [...prevConversations];
+        wsConversations.forEach((wsConv) => {
+          // Remove any conversation with the same user_id
+          updatedConversations = updatedConversations.filter(
+            (conv) => conv.user_id !== wsConv.user_id
+          );
+          // Add the new/updated conversation at the beginning of the list
+          updatedConversations.unshift(wsConv);
+        });
+        return updatedConversations;
+      });
     }
   }, [wsConversations]);
 
@@ -120,8 +130,7 @@ function UserConversationsScreen() {
         <>
           {conversations.length < 1 ? (
             <h6>
-              Nothing Here. Start a conversation by messaging one of your
-              friends!
+              Nothing Here. Start a conversation by messaging one of your friends!
             </h6>
           ) : (
             conversations.map((conversation) => (
@@ -148,16 +157,10 @@ function UserConversationsScreen() {
                       <Avatar alt={conversation.name} src={conversation.avi} />
                     </ListItemAvatar>
                     <ListItemText
-                      primary={
-                        <span style={{ fontWeight: 'bold' }}>
-                          {conversation.name}
-                        </span>
-                      }
+                      primary={<span style={{ fontWeight: 'bold' }}>{conversation.name}</span>}
                       secondary={
                         conversation.last_message_timestamp
-                          ? new Date(
-                              conversation.last_message_timestamp
-                            ).toLocaleString()
+                          ? new Date(conversation.last_message_timestamp).toLocaleString()
                           : ''
                       }
                     />
@@ -183,11 +186,7 @@ function UserConversationsScreen() {
           )}
           {conversations.length > 9 && (
             <Row className="justify-content-center">
-              <IconButton
-                style={{ color: 'red' }}
-                onClick={handleLoadMore}
-                disabled={loading}
-              >
+              <IconButton style={{ color: 'red' }} onClick={handleLoadMore} disabled={loading}>
                 <KeyboardArrowDownIcon />
               </IconButton>
             </Row>

@@ -83,7 +83,7 @@ class ChatConsumer(WebsocketConsumer):
             # For sender, the conversation update will show the receiver info
             conversation_data_sender = {
                 'user_id': receiver.id,
-                'username': receiver.username,
+                'name': receiver.username,
                 'last_message_timestamp': message.timestamp.isoformat(),
                 # For sender, you can set unread_count to 0 since they just sent the message
                 'unread_count': 0
@@ -91,7 +91,7 @@ class ChatConsumer(WebsocketConsumer):
             # For receiver, the conversation update will show the sender info
             conversation_data_receiver = {
                 'user_id': sender.id,
-                'username': sender.username,
+                'name': sender.username,
                 'last_message_timestamp': message.timestamp.isoformat(),
                 'unread_count': Message.get_unread_count(receiver, sender)
             }
