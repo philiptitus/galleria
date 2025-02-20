@@ -86,19 +86,29 @@ function UserConversationsScreen() {
   useEffect(() => {
     if (wsConversations && wsConversations.length > 0) {
       setConversations((prevConversations) => {
+        // First, deduplicate the incoming wsConversations based on user_id.
+        const uniqueWsConversations = Array.from(
+          new Map(wsConversations.map(item => [item.user_id, item])).values()
+        );
+        
         let updatedConversations = [...prevConversations];
-        wsConversations.forEach((wsConv) => {
-          // Remove any conversation with the same user_id
+        
+        uniqueWsConversations.forEach((wsConv) => {
+          // Remove any conversation where:
+          // - The HTTP-fetched conversation's _id matches the wsConv's user_id,
+          // - OR the conversation already has a user_id that matches wsConv.user_id.
           updatedConversations = updatedConversations.filter(
-            (conv) => conv.user_id !== wsConv.user_id
+            (conv) => conv._id !== wsConv.user_id && conv.user_id !== wsConv.user_id
           );
-          // Add the new/updated conversation at the beginning of the list
+          // Insert the new/updated WebSocket conversation at the beginning.
           updatedConversations.unshift(wsConv);
         });
+        
         return updatedConversations;
       });
     }
   }, [wsConversations]);
+  
 
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1);
@@ -148,38 +158,45 @@ function UserConversationsScreen() {
                   },
                 }}
               >
-                <Link
-                  to={`/userchat/${conversation._id || conversation.user_id}`}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  <ListItem alignItems="flex-start" sx={{ padding: '15px' }}>
-                    <ListItemAvatar>
-                      <Avatar alt={conversation.name} src={conversation.avi} />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={<span style={{ fontWeight: 'bold' }}>{conversation.name}</span>}
-                      secondary={
-                        conversation.last_message_timestamp
-                          ? new Date(conversation.last_message_timestamp).toLocaleString()
-                          : ''
-                      }
-                    />
-                    <Badge
-                      color="error"
-                      badgeContent={conversation.unread_count}
-                      max={99}
-                      sx={{
-                        '.MuiBadge-badge': {
-                          fontSize: '0.8rem',
-                          height: '20px',
-                          minWidth: '20px',
-                        },
-                      }}
-                    >
-                      <NotificationsNoneOutlinedIcon />
-                    </Badge>
-                  </ListItem>
-                </Link>
+ <Link
+  to={`/userchat/${conversation._id || conversation.user_id}`}
+  style={{ textDecoration: 'none', color: 'inherit' }}
+>
+  <ListItem alignItems="flex-start" sx={{ padding: '15px' }}>
+    <ListItemAvatar>
+      <Avatar alt={conversation.name} src={conversation.avi} />
+    </ListItemAvatar>
+    <ListItemText
+      primary={
+        <span style={{ fontWeight: 'bold', color: 'black' }}>
+          {conversation.name}
+        </span>
+      }
+      secondary={
+        <span style={{ fontWeight: 'bold', color: 'black' }}>
+          {conversation.last_message_timestamp
+            ? new Date(conversation.last_message_timestamp).toLocaleString()
+            : ''}
+        </span>
+      }
+    />
+    <Badge
+      color="error"
+      badgeContent={conversation.unread_count}
+      max={99}
+      sx={{
+        '.MuiBadge-badge': {
+          fontSize: '0.8rem',
+          height: '20px',
+          minWidth: '20px',
+        },
+      }}
+    >
+      <NotificationsNoneOutlinedIcon />
+    </Badge>
+  </ListItem>
+</Link>
+
                 <Divider variant="inset" component="li" />
               </List>
             ))

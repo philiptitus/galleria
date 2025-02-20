@@ -84,6 +84,7 @@ class ChatConsumer(WebsocketConsumer):
             conversation_data_sender = {
                 'user_id': receiver.id,
                 'name': receiver.username,
+                'avi': receiver.avi,
                 'last_message_timestamp': message.timestamp.isoformat(),
                 # For sender, you can set unread_count to 0 since they just sent the message
                 'unread_count': 0
@@ -92,6 +93,7 @@ class ChatConsumer(WebsocketConsumer):
             conversation_data_receiver = {
                 'user_id': sender.id,
                 'name': sender.username,
+                'avi': sender.avi,
                 'last_message_timestamp': message.timestamp.isoformat(),
                 'unread_count': Message.get_unread_count(receiver, sender)
             }
