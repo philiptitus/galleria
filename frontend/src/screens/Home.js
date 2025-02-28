@@ -13,11 +13,15 @@ import IconButton from '@mui/material/IconButton';
 import Footer from '../components/Footer';
 import Carousel from '../components/Carousel';
 import { logout } from '../actions/userAction'
-import { connectWebsocket, disconnectWebsocket } from '../actions/realActions'; // Correct import path
+import { connectWebsocket, disconnectWebsocket, receiveChatMessage } from '../actions/realActions'; // Correct import path
+import FloatingNotification from '../components/FloatingNotification';
 
 
 
 function Home() {
+    const conversations = useSelector((state) => state.websocket.messages); // Messages from Redux store
+    let [newMessage, setnewMessage] = useState({message: "",});
+  
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -40,8 +44,6 @@ function Home() {
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
   const websocket = useSelector((state) => state.websocket); // Access the websocket state from the store
-  const isConnected = websocket.connected;
-  const socket = websocket.socket; // Get the actual socket instance
 
 
 //   useEffect(() => {
@@ -58,16 +60,6 @@ function Home() {
 // }, [socket, dispatch]);  // Re-run this effect if the socket instance changes
 
 
-
-useEffect(() => {
-  if (userInfo) {  // Connect only if user is logged in
-      dispatch(connectWebsocket());
-  }
-
-  return () => {
-    dispatch(disconnectWebsocket()); // Disconnect when the component unmounts
-  };
-}, [dispatch, userInfo]); // Include userInfo in the dependency array
 
 
   const [hasExpired, setHasExpired] = useState(false);

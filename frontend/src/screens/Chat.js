@@ -35,15 +35,7 @@ function UserConversationsScreen() {
   const websocket = useSelector((state) => state.websocket);
   const { connected, conversations: wsConversations } = websocket;
 
-  // Connect to the websocket on mount, and disconnect on unmount
-  useEffect(() => {
-    if (userInfo) {
-      dispatch(connectWebsocket());
-    }
-    return () => {
-      dispatch(disconnectWebsocket());
-    };
-  }, [dispatch, userInfo]);
+
 
   // Redirect to home if not logged in
   useEffect(() => {

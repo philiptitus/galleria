@@ -71,15 +71,7 @@ function UserChatScreen() {
   const isConnected = websocket.connected;
   const socket = websocket.socket; // Get the actual socket instance
 
-useEffect(() => {
-  if (userInfo) {  // Connect only if user is logged in
-      dispatch(connectWebsocket());
-  }
 
-  return () => {
-    dispatch(disconnectWebsocket()); // Disconnect when the component unmounts
-  };
-}, [dispatch, userInfo]); // Include userInfo in the dependency array
 
 
   useEffect(() => {
@@ -301,106 +293,108 @@ useEffect(() => {
         <div className="list-group list-group-flush border-bottom scrollarea" ref={messageListRef}>
           <div ref={pusherNotificationsRef}></div>
 
-          {conversations.map((msg, index) => {
-  if (!msg || !msg.sender) {
-    return null; // Skip rendering if msg or msg.sender is undefined
-  }
+          {conversations
+  .slice() // Create a shallow copy of the array to avoid mutating the original state
+  .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)) // Sort by timestamp in descending order
+  .map((msg, index) => {
+    if (!msg || !msg.sender) {
+      return null; // Skip rendering if msg or msg.sender is undefined
+    }
 
-  return (
-    <div
-      key={index}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: userInfo.id === msg.sender ? 'flex-end' : 'flex-start',
-        margin: '10px 0'
-      }}
-    >
+    return (
       <div
+        key={index}
         style={{
-          backgroundColor: userInfo.id === msg.sender ? '#e0f7fa' : '#f1f1f1',
-          color: '#000',
-          borderRadius: '20px',
-          padding: '10px 20px',
-          maxWidth: '75%',
-          alignSelf: userInfo.id === msg.sender ? 'flex-end' : 'flex-start',
-          wordWrap: 'break-word', // Ensures long words break and the div expands
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Adds a subtle shadow
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: userInfo.id === msg.sender ? 'flex-end' : 'flex-start',
+          margin: '10px 0'
         }}
       >
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
+            backgroundColor: userInfo.id === msg.sender ? '#e0f7fa' : '#f1f1f1',
+            color: '#000',
+            borderRadius: '20px',
+            padding: '10px 20px',
+            maxWidth: '75%',
+            alignSelf: userInfo.id === msg.sender ? 'flex-end' : 'flex-start',
+            wordWrap: 'break-word', // Ensures long words break and the div expands
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Adds a subtle shadow
           }}
         >
-          <p
+          <div
             style={{
-              fontSize: 'small',
-              color: userInfo.email === msg.name ? 'red' : 'blue',
-              margin: 0 // Removes default margin
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
             }}
           >
-            {userInfo.email === msg.name ? (
-              <i
-                style={{
-                  fontSize: 'small',
-                  color: userInfo.email === msg.name ? 'red' : 'blue'
-                }}
-              >
-                Me
-              </i>
-            ) : (
-              <span>{msg.name}</span>
-            )}
-          </p>
-          <strong
+            <p
+              style={{
+                fontSize: 'small',
+                color: userInfo.email === msg.name ? 'red' : 'blue',
+                margin: 0 // Removes default margin
+              }}
+            >
+              {userInfo.email === msg.name ? (
+                <i
+                  style={{
+                    fontSize: 'small',
+                    color: userInfo.email === msg.name ? 'red' : 'blue'
+                  }}
+                >
+                  Me
+                </i>
+              ) : (
+                <span>{msg.name}</span>
+              )}
+            </p>
+            <strong
+              style={{
+                fontSize: 'x-small',
+                color: '#555'
+              }}
+            >
+              {formatTimestamp(msg.timestamp)}
+            </strong>
+            <div>
+              {!msg.is_read && userInfo.id === msg.sender && (
+                <DeleteIcon
+                  style={{
+                    cursor: 'pointer',
+                    marginLeft: '10px',
+                    color: 'red'
+                  }}
+                  onClick={() => handleDelete(msg.id)}
+                />
+              )}
+              {msg.is_read && userInfo.id === msg.sender && (
+                <VisibilityIcon
+                  style={{
+                    cursor: 'pointer',
+                    marginLeft: '10px',
+                    color: 'blue'
+                  }}
+                />
+              )}
+            </div>
+          </div>
+          <div
             style={{
-              fontSize: 'x-small',
-              color: '#555'
+              whiteSpace: 'pre-line',
+              overflow: 'hidden',
+              marginTop: '5px' // Adds a small gap between the header and the content
             }}
           >
-            {formatTimestamp(msg.timestamp)}
-          </strong>
-          <div>
-            {!msg.is_read && userInfo.id === msg.sender && (
-              <DeleteIcon
-                style={{
-                  cursor: 'pointer',
-                  marginLeft: '10px',
-                  color: 'red'
-                }}
-                onClick={() => handleDelete(msg.id)}
-              />
-            )}
-            {msg.is_read && userInfo.id === msg.sender && (
-              <VisibilityIcon
-                style={{
-                  cursor: 'pointer',
-                  marginLeft: '10px',
-                  color: 'blue'
-                }}
-              />
-            )}
+            <Typography variant="body2" component="div">
+              {msg.content}
+            </Typography>
           </div>
         </div>
-        <div
-          style={{
-            whiteSpace: 'pre-line',
-            overflow: 'hidden',
-            marginTop: '5px' // Adds a small gap between the header and the content
-          }}
-        >
-          <Typography variant="body2" component="div">
-            {msg.content}
-          </Typography>
-        </div>
       </div>
-    </div>
-  );
-})}
-
+    );
+  })}
 <hr style={{ margin: '30px 0' }} />
 
       {/* Section for HTTP-fetched messages (chat history) */}

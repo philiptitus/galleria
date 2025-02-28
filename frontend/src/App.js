@@ -5,6 +5,7 @@ import Sidebar from './components/sidebar';
 import { Navigate } from 'react-router-dom'; // Import the Navigate component
 import Home from './screens/Home';
 import Login from './screens/Login';
+import { useDispatch, useSelector } from 'react-redux';
 import SearchScreen from './screens/Search';
 import { SnackbarProvider } from 'notistack';
 import Profile from './screens/Profile';
@@ -22,11 +23,11 @@ import Footer from './components/Footer';
 import Slice from './screens/Slices';
 import Landing from './screens/Landing';
 
-import { useSelector } from 'react-redux';
-
+import { useEffect } from 'react';
 import OTPScreen from './screens/OTPscreen';
 import About from './screens/About';
-
+import { connectWebsocket, disconnectWebsocket, receiveChatMessage } from './actions/realActions';
+import FloatingNotification from './components/FloatingNotification';
 
 
 
@@ -38,9 +39,40 @@ import About from './screens/About';
 
 
 function App() {
+    const dispatch = useDispatch();
+    const websocket = useSelector((state) => state.websocket); // Access the websocket state from the store
+    const isConnected = websocket.connected;
+    const socket = websocket.socket; // Get the actual socket instance
+  
 
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
+
+
+
+  useEffect(() => {
+    if (socket && isConnected) {
+        socket.onmessage = (event) => {
+            const incomingMessage = JSON.parse(event.data).message;
+            dispatch(receiveChatMessage(incomingMessage));
+        };
+    }
+    return () => {
+        if (socket) {
+            socket.onmessage = null;
+        }
+    };
+}, [socket, isConnected, dispatch]);
+  useEffect(() => {
+    if (userInfo) {  // Connect only if user is logged in
+        dispatch(connectWebsocket());
+    }
+  
+    return () => {
+      dispatch(disconnectWebsocket()); // Disconnect when the component unmounts
+    };
+  }, [dispatch, userInfo]); // Include userInfo in the dependency array
+  
 
   return (
     <Router>
@@ -49,6 +81,8 @@ function App() {
   userInfo &&
         <Sidebar />
         }
+                <FloatingNotification />
+
         
         <main className='py-4'>
           <Container>
