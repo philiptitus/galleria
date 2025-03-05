@@ -27,7 +27,7 @@ Did you Know Galleria Has a mobile version as well check it out here [Galleria-M
 
 ## Tech Stack
 
-- **Backend**: Django, Django Rest Framework (DRF), PostgreSQL
+- **Backend**: Django, Django Rest Framework (DRF), PostgreSQL, Django Channels with Redis(for websocket functionality)
 - **Frontend**: React, Redux, JavaScript
 - **API**: RESTful API with JWT authentication
 - **Database**: PostgreSQL
