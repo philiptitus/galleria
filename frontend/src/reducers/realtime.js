@@ -4,6 +4,7 @@ const initialState = {
     error: null,
     messages: [], // Stores incoming chat messages
     conversations: [], // Stores conversation update objects
+    onlineStatus: { sender_online: false, receiver_online: false }, // Stores online status of users
 };
 
 export const websocketReducer = (state = initialState, action) => {
@@ -47,6 +48,15 @@ export const websocketReducer = (state = initialState, action) => {
                 conversations: updatedConversations,
             };
         }
+        case 'JOIN_CHAT_GROUP':
+            // Handle joining a chat group without sending a message
+            return state;
+        case 'CHECK_USERS_ONLINE':
+            // Handle checking users online status
+            return {
+                ...state,
+                onlineStatus: action.payload,
+            };
         default:
             return state;
     }

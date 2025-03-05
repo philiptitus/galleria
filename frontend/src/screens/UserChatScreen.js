@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
-import { connectWebsocket, disconnectWebsocket, receiveChatMessage } from '../actions/realActions'; // Correct import path
+import { connectWebsocket, disconnectWebsocket, joinChatGroup, receiveChatMessage, checkUsersOnline } from '../actions/realActions'; // Correct import path
 import { sendChat } from '../actions/realActions';
 import { logout } from '../actions/userAction';
 import { Link, useParams } from 'react-router-dom';
@@ -70,6 +70,7 @@ function UserChatScreen() {
   const websocket = useSelector((state) => state.websocket); // Access the websocket state from the store
   const isConnected = websocket.connected;
   const socket = websocket.socket; // Get the actual socket instance
+  const onlineStatus = useSelector((state) => state.websocket.onlineStatus); // Access the online status from the store
 
 
 
@@ -120,6 +121,10 @@ function UserChatScreen() {
 
   useEffect(() => {
     if (userInfo) {
+
+
+      
+
       const fetchData = async () => {
         try {
           setLoading(true);
@@ -145,16 +150,19 @@ function UserChatScreen() {
         }
       };
       fetchData();
-    }
-  }, [page, searchText, userInfo]);
-      //   useEffect(() => {
-      //     //Combine initial messages with the messages from Redux ONLY when loading is false
-      //     if (!loading && userInfo && conversations.length > 0) {
-      //         const combinedMessages = [...conversations, ...messagesFromRedux];
-      //         setConversations(combinedMessages);
-      //     }
-      // }, [messagesFromRedux, loading, userInfo, conversations]); // Only run when these change
-      
+
+
+
+if (isConnected) {
+
+  console.log("Calling chat group action")
+  dispatch(joinChatGroup(receiver_id)); // Dispatch the action correctly
+  
+}
+
+      }
+  }, [page, searchText, userInfo, isConnected]);
+
       useEffect(() => {
         if (socket && isConnected) {
             socket.onmessage = (event) => {
@@ -222,6 +230,22 @@ function UserChatScreen() {
     }}>
       <br/>
       <br/>
+
+<div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+    <div
+        style={{
+            width: '10px',
+            height: '10px',
+            borderRadius: '50%',
+            backgroundColor: onlineStatus.sender_online && onlineStatus.receiver_online ? 'green' : onlineStatus.sender_online ? 'green' : 'red',
+            marginRight: '5px',
+        }}
+    ></div>
+    <span style={{ color: onlineStatus.sender_online && onlineStatus.receiver_online ? 'green' : 'red' }}>
+        {onlineStatus.sender_online && onlineStatus.receiver_online ? 'Connected' : onlineStatus.sender_online ? 'Connected' : 'Offline'}
+    </span>
+</div>
+
       <br/>
       <div>
 

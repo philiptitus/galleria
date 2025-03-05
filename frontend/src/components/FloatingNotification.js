@@ -24,7 +24,8 @@ const FloatingNotification = () => {
   const navigate = useNavigate();
   const websocket = useSelector((state) => state.websocket);
   const { messages } = websocket;
-
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const FloatingNotification = () => {
       const newNotifications = messages.map((msg) => ({
         id: msg?.id,
         sender: msg?.sender,
+
         content: msg?.content,
       }));
       setNotifications((prevNotifications) => [
@@ -55,19 +57,21 @@ const FloatingNotification = () => {
   return (
     <>
       {notifications.map((notification) => (
-        <Snackbar
-          key={notification?.id}
-          open={true}
-          autoHideDuration={5000}
-          onClose={() => handleClose(notification?.id)}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <SnackbarContent
-            className={classes.notification}
-            message={`New message!`}
-            onClick={() => handleClick(notification?.id)}
-          />
-        </Snackbar>
+        userInfo.id !== notification?.sender && (
+          <Snackbar
+            key={notification?.id}
+            open={true}
+            autoHideDuration={5000}
+            onClose={() => handleClose(notification?.id)}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <SnackbarContent
+              className={classes.notification}
+              message={`New message!`}
+              onClick={() => handleClick(notification?.id)}
+            />
+          </Snackbar>
+        )
       ))}
     </>
   );

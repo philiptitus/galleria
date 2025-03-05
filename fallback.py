@@ -47,6 +47,8 @@ class ChatConsumer(WebsocketConsumer):
             self.create_chat(data)
         elif data.get('source') == 'join_chat_group':
             self.join_chat_group(data)
+        elif data.get('source') == 'check_users_online':
+            self.check_users_online(data)
 
     def create_chat(self, data):
         sender = self.scope['user']
@@ -70,6 +72,9 @@ class ChatConsumer(WebsocketConsumer):
 
             # Ensure the sender joins the chat group
             async_to_sync(self.channel_layer.group_add)(self.group_name, self.channel_name)
+
+            # Check if both users are online
+            # self.check_users_online(sender, receiver)
 
             # Create and save the message
             message = Message.objects.create(sender=sender, receiver=receiver, content=content)
@@ -152,9 +157,55 @@ class ChatConsumer(WebsocketConsumer):
     def chat_message(self, event):
         message = event['message']
         print(f"Sending chat message: {json.dumps(message, indent=2)}")
+        
+        # Send the message to the WebSocket
         self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
+        
+        # Mark the message as read if the receiver is in the chat group
+        receiver_id = message['receiver']
+        if self.scope['user'].id == receiver_id:
+            try:
+                msg = Message.objects.get(id=message['id'])
+                msg.is_read = True
+                msg.save()
+                print(f"Message {msg.id} marked as read")
+            except Message.DoesNotExist:
+                print(f"Message {message['id']} does not exist")
 
     def conversation_update(self, event):
         conversation = event['conversation']
         print(f"Sending conversation update: {json.dumps(conversation, indent=2)}")
         self.send(text_data=json.dumps({'conversation': conversation}, cls=DjangoJSONEncoder))
+
+    def check_users_online(self, data):
+        sender_id = data.get('chat', {}).get('sender_id')
+        receiver_id = data.get('chat', {}).get('receiver_id')
+
+        try:
+            sender = CustomUser.objects.get(id=sender_id)
+            receiver = CustomUser.objects.get(id=receiver_id)
+
+            # Check if both users are in the chat group
+            group_name = f"chat_{min(sender.id, receiver.id)}_{max(sender.id, receiver.id)}"
+            group_members = self.channel_layer.groups.get(group_name, set())
+
+            sender_online = sender.channel_name in group_members
+            receiver_online = receiver.channel_name in group_members
+
+            if sender_online:
+                print(f"Sender {sender.username} is online")
+            else:
+                print(f"Sender {sender.username} is not online")
+
+            if receiver_online:
+                print(f"Receiver {receiver.username} is online")
+            else:
+                print(f"Receiver {receiver.username} is not online")
+
+            self.send(text_data=json.dumps({
+                'sender_online': sender_online,
+                'receiver_online': receiver_online
+            }, cls=DjangoJSONEncoder))
+
+        except CustomUser.DoesNotExist:
+            self.send(text_data=json.dumps({'error': 'User does not exist'}, cls=DjangoJSONEncoder))

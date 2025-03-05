@@ -50,29 +50,35 @@ function App() {
 
 
 
-  useEffect(() => {
-    if (socket && isConnected) {
-        socket.onmessage = (event) => {
-            const incomingMessage = JSON.parse(event.data).message;
-            dispatch(receiveChatMessage(incomingMessage));
-        };
-    }
-    return () => {
-        if (socket) {
-            socket.onmessage = null;
-        }
-    };
-}, [socket, isConnected, dispatch]);
+//   useEffect(() => {
+//     if (socket && isConnected) {
+//         socket.onmessage = (event) => {
+//             const incomingMessage = JSON.parse(event.data).message;
+//             dispatch(receiveChatMessage(incomingMessage));
+//         };
+//     }
+//     return () => {
+//         if (socket) {
+//             socket.onmessage = null;
+//         }
+//     };
+// }, [socket, isConnected, dispatch]);
   useEffect(() => {
     if (userInfo) {  // Connect only if user is logged in
         dispatch(connectWebsocket());
     }
   
-    return () => {
-      dispatch(disconnectWebsocket()); // Disconnect when the component unmounts
-    };
+
   }, [dispatch, userInfo]); // Include userInfo in the dependency array
-  
+  useEffect(() => {
+    const checkConnection = setInterval(() => {
+        if (userInfo && !isConnected) {
+            dispatch(connectWebsocket());
+        }
+    }, 5000); // Check every 5 seconds
+
+    return () => clearInterval(checkConnection);
+}, [dispatch, userInfo, isConnected]);
 
   return (
     <Router>
