@@ -176,6 +176,13 @@ if (isConnected) {
             }
         };
     }, [socket, isConnected, dispatch]);
+
+    useEffect(() => {
+    if (isConnected && userInfo) {
+        dispatch(checkUsersOnline(userInfo.id, receiver_id));
+    }
+}, [isConnected, userInfo, receiver_id, dispatch]);
+
   const handleLoadMore = () => {
     // Increment the page to fetch the next set of posts
     setPage((prevPage) => prevPage + 1);
@@ -237,12 +244,12 @@ if (isConnected) {
             width: '10px',
             height: '10px',
             borderRadius: '50%',
-            backgroundColor: onlineStatus.sender_online && onlineStatus.receiver_online ? 'green' : onlineStatus.sender_online ? 'green' : 'red',
+            backgroundColor: onlineStatus.sender_online && onlineStatus.receiver_online ? 'green' : onlineStatus.sender_online ? 'yellow' : 'red',
             marginRight: '5px',
         }}
     ></div>
-    <span style={{ color: onlineStatus.sender_online && onlineStatus.receiver_online ? 'green' : 'red' }}>
-        {onlineStatus.sender_online && onlineStatus.receiver_online ? 'Connected' : onlineStatus.sender_online ? 'Connected' : 'Offline'}
+    <span style={{ color: onlineStatus.sender_online && onlineStatus.receiver_online ? 'green' : onlineStatus.sender_online  ? 'yellow' : 'red' }}>
+        {onlineStatus.sender_online && onlineStatus.receiver_online ? 'Connected' : onlineStatus.sender_online ? 'Offline' : 'Error!'}
     </span>
 </div>
 

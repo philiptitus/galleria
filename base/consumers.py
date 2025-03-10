@@ -8,6 +8,8 @@ from base.serializers import *
 
 
 class ChatConsumer(WebsocketConsumer):
+    online_users = {}  # Class-level attribute to track online users
+
     def connect(self):
         self.user = self.scope['user']
         if not self.user.is_authenticated:
@@ -24,6 +26,10 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
 
+        # Mark the user as online
+        ChatConsumer.online_users[self.user.id] = True
+        print(f"User {self.user.id} is online")
+
         self.accept()
 
     def disconnect(self, close_code):
@@ -39,6 +45,11 @@ class ChatConsumer(WebsocketConsumer):
                 self.channel_name
             )
 
+        # Mark the user as offline
+        if self.user.id in ChatConsumer.online_users:
+            del ChatConsumer.online_users[self.user.id]
+            print(f"User {self.user.id} is offline")
+
     def receive(self, text_data):
         data = json.loads(text_data)
         print('receive', json.dumps(data, indent=2))
@@ -47,6 +58,8 @@ class ChatConsumer(WebsocketConsumer):
             self.create_chat(data)
         elif data.get('source') == 'join_chat_group':
             self.join_chat_group(data)
+        elif data.get('source') == 'check_users_online':
+            self.check_users_online(data)
 
     def create_chat(self, data):
         sender = self.scope['user']
@@ -143,7 +156,17 @@ class ChatConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_add)(self.group_name, self.channel_name)
             print(f"User {user.id} joined chat group {self.group_name}")
 
+            # Initialize or update the active users list
+            if not hasattr(self, 'active'):
+                self.active = []
+            if user.id not in self.active:
+                self.active.append(user.id)
+                print(f"Active users in group {self.group_name}: {self.active}")
+
             self.send(text_data=json.dumps({'success': f'Joined chat group {self.group_name}'}, cls=DjangoJSONEncoder))
+
+            # Check if both users are online
+            # self.check_users_online({'chat': {'sender_id': user.id, 'receiver_id': other_user.id}})
 
         except Exception as e:
             self.send(text_data=json.dumps({'error': str(e)}, cls=DjangoJSONEncoder))
@@ -158,3 +181,40 @@ class ChatConsumer(WebsocketConsumer):
         conversation = event['conversation']
         print(f"Sending conversation update: {json.dumps(conversation, indent=2)}")
         self.send(text_data=json.dumps({'conversation': conversation}, cls=DjangoJSONEncoder))
+
+
+
+    def check_users_online(self, data):
+        sender_id = data.get('chat', {}).get('sender_id')
+        receiver_id = data.get('chat', {}).get('receiver_id')
+
+        print(f"Checking online status for sender_id: {sender_id}, receiver_id: {receiver_id}")
+
+        try:
+            sender = CustomUser.objects.get(id=sender_id)
+            receiver = CustomUser.objects.get(id=receiver_id)
+
+            # Check if both users are in the online users list
+            sender_online = ChatConsumer.online_users.get(sender.id, False)
+            receiver_online = ChatConsumer.online_users.get(receiver.id, False)
+
+            if sender_online:
+                print(f"Sender {sender.username} is online")
+            else:
+                print(f"Sender {sender.username} is not online")
+
+            if receiver_online:
+                print(f"Receiver {receiver.username} is online")
+            else:
+                print(f"Receiver {receiver.username} is not online")
+
+            self.send(text_data=json.dumps({
+                'sender_online': sender_online,
+                'receiver_online': receiver_online
+            }, cls=DjangoJSONEncoder))
+
+        except CustomUser.DoesNotExist:
+            self.send(text_data=json.dumps({'error': 'User does not exist'}, cls=DjangoJSONEncoder))
+
+
+

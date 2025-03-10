@@ -4,6 +4,8 @@ from ..views.user_views import *
 
 urlpatterns = [
 
+
+    path("google/", GoogleAuthView.as_view(), name="google-auth"),
     path('getotp/', Createotp.as_view(), name='create-otp'),   ##
     path('verify/', VerifyUserEmail.as_view(), name='verify'), ##
     path('upload/', uploadImage.as_view(), name='image-upload'), ##

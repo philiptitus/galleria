@@ -130,6 +130,7 @@ export const checkUsersOnline = (senderId, receiverId) => {
     return (dispatch, getState) => {
         const socket = getState().websocket.socket;
 
+        const sendCheckRequest = () => {
         if (socket && socket.readyState === WebSocket.OPEN) {
             try {
                 console.log(`Checking if users ${senderId} and ${receiverId} are online`);
@@ -137,11 +138,40 @@ export const checkUsersOnline = (senderId, receiverId) => {
                     source: 'check_users_online',
                     chat: { sender_id: senderId, receiver_id: receiverId }
                 }));
+
+                // Add an event listener to capture the response from the server
+                socket.addEventListener('message', function(event) {
+                    const data = JSON.parse(event.data);
+                    console.log('Server response:', data);
+
+                    // Check if users online status is received
+                    if (data.hasOwnProperty('sender_online') && data.hasOwnProperty('receiver_online')) {
+                        console.log(`Sender online: ${data.sender_online}, Receiver online: ${data.receiver_online}`);
+                        dispatch({
+                            type: 'CHECK_USERS_ONLINE',
+                            payload: {
+                                sender_online: data.sender_online,
+                                receiver_online: data.receiver_online,
+                            },
+                        });
+                    }
+                });
+
             } catch (error) {
                 console.error('Error checking users online:', error);
             }
         } else {
             console.error('WebSocket not open. Cannot check users online.');
         }
+
+    }
+        // Retry mechanism to wait for WebSocket to be open
+        const retryInterval = setInterval(() => {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                clearInterval(retryInterval);
+                sendCheckRequest();
+            }
+        }, 100); // Retry every 100ms
+
     };
 };
