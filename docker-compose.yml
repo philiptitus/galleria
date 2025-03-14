@@ -15,6 +15,12 @@ services:
     depends_on:
       - db
       - redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"   # Maximum size of a log file
+        max-file: "3"     # Maximum number of log files to keep
+
 
   db:
     image: postgres:13
@@ -24,6 +30,15 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"   # Maximum size of a log file
+        max-file: "3"     # Maximum number of log files to keep
+
+
+
+
 
   redis:
     image: redis:6

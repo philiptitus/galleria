@@ -25,6 +25,7 @@ lib/
 lib64/
 include/
 *.lock
+aws/
 
 
 # React (frontend)
