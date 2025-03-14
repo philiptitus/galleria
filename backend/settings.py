@@ -34,9 +34,9 @@ DEBUG = True
 
 #CHANGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
-ALLOWED_HOSTS = ['galleria.pythonanywhere.com', '127.0.0.1:8000', 'localhost:8000', '127.0.0.1', 'localhost']
+# ALLOWED_HOSTS = ['galleria.pythonanywhere.com', '127.0.0.1:8000', 'localhost:8000', '127.0.0.1', 'localhost', '192.168.43.77:8001']
 
-
+ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,12 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'rest_framework',
     'corsheaders',
-    'base.apps.BaseConfig',
-    'notifications',
+
     'django_user_agents',
     'channels',
     'daphne',
     'django.contrib.staticfiles',
+    'base.apps.BaseConfig',  # make sure this is the correct path
+    'notifications',  # and other apps
 
 
 ]
@@ -170,13 +171,17 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# Database configuration
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

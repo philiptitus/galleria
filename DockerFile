@@ -1,0 +1,16 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+ADD ./requirements.txt /app/requirements.txt
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+ADD . /app
+
+COPY . /app
+
+
+# Make port 8000 available to the world outside this container
+EXPOSE 8000
+
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "backend.asgi:application"]
