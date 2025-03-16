@@ -8,7 +8,7 @@ export const connectWebsocket = () => {
         try {
             const tokens = await secure.get('userInfo');
             const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const newSocket = new WebSocket(`${wsProtocol}//13.48.178.77:8000/chat/?token=${tokens.access}`);
+            const newSocket = new WebSocket(`${wsProtocol}//galleriaapi.duckdns.org:8000/chat/?token=${tokens.access}`);
 
             dispatch({ type: 'WEBSOCKET_CONNECT', payload: newSocket });
 
