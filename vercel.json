@@ -1,23 +1,12 @@
 {
     "buildCommand": "cd frontend && npm install && npm run build",
     "outputDirectory": "frontend/build",
+    "installCommand": "cd frontend && npm install",
     "framework": "create-react-app",
     "routes": [
       {
-        "src": "/static/(.*)",
-        "dest": "/frontend/static/$1"
-      },
-      {
-        "src": "/favicon.ico",
-        "dest": "/frontend/favicon.ico"
-      },
-      {
-        "src": "/manifest.json",
-        "dest": "/frontend/manifest.json"
-      },
-      {
         "src": "/(.*)",
-        "dest": "/frontend/index.html"
+        "dest": "/index.html"
       }
     ],
     "ignoreCommand": "git diff HEAD^ HEAD --quiet ./frontend"
