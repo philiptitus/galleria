@@ -43,7 +43,7 @@ export const createChat = (chat) => async (dispatch, getState) => {
         }
 
         const { data } = await axios.post(
-            `/api/notifications/chat/`,
+            `https://galleriaapi.duckdns.org/api/notifications/chat/`,
             chat,
             config
         )
@@ -93,7 +93,7 @@ export const deleteMessage = (messageId) => async(dispatch, getState) => {
         }
 
         const { data } = await axios.delete(
-            `/api/notifications/${messageId}/delete/`,
+            `https://galleriaapi.duckdns.org/api/notifications/${messageId}/delete/`,
             config
         )
         dispatch({
