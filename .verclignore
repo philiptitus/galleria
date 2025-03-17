@@ -1,7 +1,0 @@
-backend/
-requirements.txt
-*.py
-__pycache__
-*.pyc
-venv/
-env/
