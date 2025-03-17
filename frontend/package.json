@@ -48,10 +48,14 @@
     "zustand": "^5.0.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "npm install --legacy-peer-deps && react-scripts start",
+    "build": "npm install --legacy-peer-deps && react-scripts build",
+    "test": "npm install --legacy-peer-deps && react-scripts test",
+    "eject": "npm install --legacy-peer-deps && react-scripts eject",
+    "predeploy": "npm install --legacy-peer-deps && npm run build",
+    "deploy": "npm install --legacy-peer-deps && gh-pages -d build",
+    "preinstall": "npx npm-force-resolutions && rm -rf node_modules package-lock.json",
+    "postinstall": "npm install ajv ajv-keywords --legacy-peer-deps"
   },
   "eslintConfig": {
     "extends": [
