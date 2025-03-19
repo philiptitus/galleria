@@ -94,7 +94,7 @@ export const verifyOtpAction = (otp) => async (dispatch, getState) => {
             }
         }
 
-    const { data } = await axios.post(`https://galleriaapi.duckdns.org/api/users/verify/`,{otp}, config);
+    const { data } = await axios.post(`/api/users/verify/`,{otp}, config);
 
         dispatch({
             type: VERIFY_NUMBER_SUCCESS,
@@ -126,7 +126,7 @@ export const googleauth = (auth_code) => async(dispatch, getState) => {
         }
 
         const { data } = await axios.post(
-            `https://galleriaapi.duckdns.org/api/users/google/`,
+            `/api/users/google/`,
             { 'auth_code': auth_code },
             config
         )
@@ -176,7 +176,7 @@ export const getOtpAction = () => async (dispatch, getState) => {
 
 
 
-    const { data } = await axios.post(`https://galleriaapi.duckdns.org/api/users/getotp/`, 
+    const { data } = await axios.post(`/api/users/getotp/`, 
     {},
     config);
 
@@ -219,7 +219,7 @@ export const forgot_password = (email) => async dispatch => {
     };
 
 
-    const { data } = await axios.post(`https://galleriaapi.duckdns.org/api/users/password-reset/`, {email}, config);
+    const { data } = await axios.post(`/api/users/password-reset/`, {email}, config);
 
         dispatch({
             type: PASSWORD_RESET_SUCCESS,
@@ -259,7 +259,7 @@ export const reset_password = (new_password) => async dispatch => {
         };
 
 
-        const { data } =  await axios.patch(`https://galleriaapi.duckdns.org/api/users/set-new-password/`, new_password, config);
+        const { data } =  await axios.patch(`/api/users/set-new-password/`, new_password, config);
 
         dispatch({
             type: PASSWORD_RESET_CONFIRM_SUCCESS,
@@ -297,7 +297,7 @@ export const login = (email, password) => async(dispatch) => {
         }
 
         const { data } = await axios.post(
-            'https://galleriaapi.duckdns.org/api/users/login/',
+            '/api/users/login/',
             { 'username': email, 'password':password },
             config
         )
@@ -344,7 +344,7 @@ export const register = (name, email, password) => async(dispatch) => {
         }
 
         const { data } = await axios.post(
-            'https://galleriaapi.duckdns.org/api/users/register/',
+            '/api/users/register/',
             { 'name':name, 'email': email, 'password':password },
             config
         )
@@ -393,7 +393,7 @@ export const getUserDetails = (id) => async(dispatch, getState) => {
         }
 
         const { data } = await axios.get(
-            `https://galleriaapi.duckdns.org/api/users/${id}/`,
+            `/api/users/${id}/`,
             config
         )
         dispatch({
@@ -439,7 +439,7 @@ export const updateUserProfile = (user) => async(dispatch, getState) => {
         }
 
         const { data } = await axios.put(
-            `https://galleriaapi.duckdns.org/api/users/profile/update/`,
+            `/api/users/profile/update/`,
             user,
             config
         )
@@ -489,7 +489,7 @@ export const deleteUser = (id) => async(dispatch, getState) => {
         }
 
         const { data } = await axios.delete(
-            `https://galleriaapi.duckdns.org/api/users/delete/${id}/`,
+            `/api/users/delete/${id}/`,
             config
         )
         dispatch({
@@ -524,7 +524,7 @@ export const followUser = (id) => async (dispatch, getState) => {
         },
       };
   
-      const { data } = await axios.post(`https://galleriaapi.duckdns.org/api/users/${id}/follow/`, {}, config); // <-- Move config as the third parameter
+      const { data } = await axios.post(`/api/users/${id}/follow/`, {}, config); // <-- Move config as the third parameter
   
       dispatch({
         type: USER_FOLLOW_SUCCESS,
@@ -558,7 +558,7 @@ export const followUser = (id) => async (dispatch, getState) => {
         },
       };
   
-      const { data } = await axios.post(`https://galleriaapi.duckdns.org/api/users/request/${id}/`, action,config); // <-- Move config as the third parameter
+      const { data } = await axios.post(`/api/users/request/${id}/`, action,config); // <-- Move config as the third parameter
   
       dispatch({
         type: USER_FOLLOW_SUCCESS,
@@ -596,7 +596,7 @@ export const deleteAccount = () => async(dispatch, getState) => {
         }
 
         const { data } = await axios.delete(
-            `https://galleriaapi.duckdns.org/api/users/delete/`,
+            `/api/users/delete/`,
             config
         )
         dispatch({
@@ -637,7 +637,7 @@ export const updateUser = (user) => async(dispatch, getState) => {
         }
 
         const { data } = await axios.put(
-            `https://galleriaapi.duckdns.org/api/users/update/${user._id}/`,
+            `/api/users/update/${user._id}/`,
             user, 
             config
         )
