@@ -1,0 +1,16 @@
+services:
+- type: web
+  name: galleria
+  runtime: node
+  repo: https://github.com/philiptitus/galleria
+  plan: free
+  envVars:
+  - key: REACT_APP_GOOGLE_REDIRECT_URI
+    sync: false
+  - key: REACT_APP_GOOGLE_CLIENT_ID
+    sync: false
+  region: oregon
+  buildCommand: npm install --legacy-peer-deps && npm run build
+  startCommand: npm start
+  rootDir: frontend
+version: "1"
