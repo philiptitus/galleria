@@ -11,6 +11,6 @@ services:
     sync: false
   region: oregon
   buildCommand: npm install --legacy-peer-deps && npm run build
-  startCommand: npm start
+  startCommand: npx serve -s build -l $PORT
   rootDir: frontend
 version: "1"
