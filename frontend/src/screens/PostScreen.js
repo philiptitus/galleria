@@ -58,7 +58,7 @@ function PostScreen() {
 
 
     const postDetails = useSelector((state) => state.postDetails);
-    const { error, loading, post, success:successPost } = postDetails;
+    const {  loading, post, success:successPost } = postDetails;
     const dispatch = useDispatch()
 
 

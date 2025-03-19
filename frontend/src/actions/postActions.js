@@ -62,7 +62,7 @@ import axios from 'axios'
 export const listPostDetails = (id) => async (dispatch) => {
     try {
         dispatch({ type: POST_DETAILS_REQUEST })
-        const { data } = await axios.get(`https://galleriaapi.duckdns.org/api/posts/${id}/`);
+        const { data } = await axios.get(`/api/posts/${id}/`);
 
         dispatch({
             type: POST_DETAILS_SUCCESS,
@@ -105,7 +105,7 @@ export const deletePost = (postId) => async(dispatch, getState) => {
         }
 
         const { data } = await axios.delete(
-            `https://galleriaapi.duckdns.org/api/posts/${postId}/delete/`,
+            `/api/posts/${postId}/delete/`,
             config
         )
         dispatch({
@@ -145,7 +145,7 @@ export const deleteComment = (id) => async(dispatch, getState) => {
         }
 
         const { data } = await axios.delete(
-            `https://galleriaapi.duckdns.org/api/posts/comment/${id}/delete/`,
+            `/api/posts/comment/${id}/delete/`,
             config
         )
         dispatch({
@@ -187,7 +187,7 @@ export const createPost = () => async(dispatch, getState) => {
         }
 
         const { data } = await axios.post(
-            `https://galleriaapi.duckdns.org/api/posts/new/`,
+            `/api/posts/new/`,
             {},
             config
         )
@@ -227,7 +227,7 @@ export const updatePost = (post) => async(dispatch, getState) => {
         }
 
         const { data } = await axios.put(
-            `https://galleriaapi.duckdns.org/api/posts/update/${post.id}/`,
+            `/api/posts/update/${post.id}/`,
             post,
             config
         )
@@ -273,7 +273,7 @@ export const createpostComment = (postId, comment) => async (dispatch, getState)
         }
 
         const { data } = await axios.post(
-            `https://galleriaapi.duckdns.org/api/posts/${postId}/comment/`,
+            `/api/posts/${postId}/comment/`,
             comment,
             config
         )
@@ -323,7 +323,7 @@ export const createBookmark = (postId) => async(dispatch, getState) => {
         }
 
         const { data } = await axios.post(
-            `https://galleriaapi.duckdns.org/api/posts/${postId}/bookmark/`,
+            `/api/posts/${postId}/bookmark/`,
             {},
             config,
         )
@@ -365,7 +365,7 @@ export const createLike = (postId) => async(dispatch, getState) => {
         }
 
         const { data } = await axios.post(
-            `https://galleriaapi.duckdns.org/api/posts/${postId}/like/`,
+            `/api/posts/${postId}/like/`,
             {},
             config,
         )

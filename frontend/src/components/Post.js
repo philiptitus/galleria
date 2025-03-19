@@ -62,7 +62,7 @@ export default function Post({image, date, caption, description, total_likes, to
   const navigate = useNavigate();
 
   const postDelete = useSelector((state) => state.postDelete);
-  const { success, error } = postDelete;
+  const { success } = postDelete;
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 

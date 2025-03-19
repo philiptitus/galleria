@@ -1,6 +1,5 @@
 {
   "name": "frontend",
-  "proxy": "https://galleriaapi.duckdns.org",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -18,7 +17,9 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.6.5",
+    "ajv": "^8.17.1",
+    "ajv-keywords": "^5.1.0",
+    "axios": "^1.7.5",
     "cloudinary-video-player": "^1.10.5",
     "date-fns": "^3.3.1",
     "framer-motion": "^10.18.0",
@@ -48,14 +49,10 @@
     "zustand": "^5.0.2"
   },
   "scripts": {
-    "start": "npm install --legacy-peer-deps && react-scripts start",
-    "build": "npm install --legacy-peer-deps && react-scripts build",
-    "test": "npm install --legacy-peer-deps && react-scripts test",
-    "eject": "npm install --legacy-peer-deps && react-scripts eject",
-    "predeploy": "npm install --legacy-peer-deps && npm run build",
-    "deploy": "npm install --legacy-peer-deps && gh-pages -d build",
-    "preinstall": "npx npm-force-resolutions && rm -rf node_modules package-lock.json",
-    "postinstall": "npm install ajv ajv-keywords --legacy-peer-deps"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

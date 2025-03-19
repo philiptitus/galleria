@@ -48,7 +48,7 @@ interface ListProps {
 
 const Scroller = ({ user,avatar, postId, total, showLike = false, showBookmark = false, showComment = false }: ListProps) => {
   const postDetails = useSelector((state) => state.postDetails);
-  const { post, loading, error, success:successPost } = postDetails;
+  const { post, loading,  success:successPost } = postDetails;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;

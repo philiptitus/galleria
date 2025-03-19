@@ -18,7 +18,7 @@ const Sidebar = () => {
   const sidebarRef = useRef(null);
 
   const postCreate = useSelector((state) => state.postCreate);
-  const { success, loading, error, post } = postCreate;
+  const { success, loading, post } = postCreate;
 
   const handleClick = () => {
     setOpen((prev) => !prev);

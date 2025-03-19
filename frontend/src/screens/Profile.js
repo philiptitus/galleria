@@ -57,7 +57,7 @@ function FormPropsTextFields() {
   const { enqueueSnackbar } = useSnackbar(); // useSnackbar hook
 
   const userDetails = useSelector((state) => state.userDetails);
-  const { error, loading, user } = userDetails;
+  const {  loading, user } = userDetails;
   
 
   const [email, setEmail] = useState('');
@@ -309,7 +309,7 @@ function ChangePhoto() {
   const { enqueueSnackbar } = useSnackbar(); // useSnackbar hook
 
   const userDetails = useSelector((state) => state.userDetails);
-  const { error, loading, user } = userDetails;
+  const {  loading, user } = userDetails;
   
 
   const [email, setEmail] = useState('');
@@ -484,7 +484,7 @@ const uploadFileHandler = async (e) => {
         };
 
         const userDetails = useSelector((state) => state.userDetails);
-        const { error, loading, user } = userDetails;
+        const {  loading, user } = userDetails;
 
         const dispatch = useDispatch()
         const navigate = useNavigate()

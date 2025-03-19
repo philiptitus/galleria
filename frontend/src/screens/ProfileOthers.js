@@ -119,7 +119,7 @@ function ScrollableTabsButtonAuto() {
     };
   
     const userDetails = useSelector((state) => state.userDetails);
-    const { error, loading, user } = userDetails;
+    const {  loading, user } = userDetails;
     const navigate = useNavigate()
 
 
