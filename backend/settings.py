@@ -241,9 +241,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = False
 
-CORS_ALLOWED_ORIGINS = [
-    "https://galleria-6vaf.onrender.com",  # Only allow your frontend
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "https://galleria-6vaf.onrender.com",  # Only allow your frontend
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+
 
 # settings.py
 
