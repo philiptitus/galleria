@@ -1,54 +1,54 @@
-# # version: '3.8'
+version: '3.8'
 
-# # services:
-# #   web:
-# #     build: .
-# #     command: python manage.py runserver 0.0.0.0:8000
-# #     volumes:
-# #       - .:/app
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
 
-# #     ports:
-# #       - "8000:8000"
-# #     environment:
-# #       - DEBUG=1
-# #       - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
-# #     depends_on:
-# #       - db
-# #       - redis
-# #     logging:
-# #       driver: "json-file"
-# #       options:
-# #         max-size: "10m"   # Maximum size of a log file
-# #         max-file: "3"     # Maximum number of log files to keep
-
-
-# #   db:
-# #     image: postgres:13
-# #     volumes:
-# #       - postgres_data:/var/lib/postgresql/data
-# #     environment:
-# #       - POSTGRES_DB=postgres
-# #       - POSTGRES_USER=postgres
-# #       - POSTGRES_PASSWORD=postgres
-# #     logging:
-# #       driver: "json-file"
-# #       options:
-# #         max-size: "10m"   # Maximum size of a log file
-# #         max-file: "3"     # Maximum number of log files to keep
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+    depends_on:
+      - db
+      - redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"   # Maximum size of a log file
+        max-file: "3"     # Maximum number of log files to keep
 
 
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"   # Maximum size of a log file
+        max-file: "3"     # Maximum number of log files to keep
 
 
 
-# #   redis:
-# #     image: redis:6
-# #     ports:
-# #       - "6379:6379"
 
-# # volumes:
-# #   postgres_data:
-# #   static_volume:
-# #   media_volume:
+
+  redis:
+    image: redis:6
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
 
 
 
