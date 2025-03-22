@@ -32,7 +32,8 @@ import {
         privateFollowReducer,
         requestListReducer,
         getOtpReducer,
-        verifyOtpReducer
+        verifyOtpReducer,
+        googleLoginReducer
     } from './reducers/userReducers'
 
 
@@ -65,6 +66,8 @@ const reducer = combineReducers(
         requestList:requestListReducer,
         getOtp:getOtpReducer,
         verifyOtp:verifyOtpReducer,
+        googleLogin:googleLoginReducer,
+
 
 
         notificationList:notificationListReducer,

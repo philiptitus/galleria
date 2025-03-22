@@ -24,6 +24,8 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='index.html')),
+    path('auth/callback/', TemplateView.as_view(template_name='index.html')),
+
     path('admin/', admin.site.urls),
     path('api/posts/', include('base.urls.post_urls')),
     path('api/users/', include('base.urls.user_urls')),

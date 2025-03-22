@@ -25,6 +25,7 @@ lib/
 lib64/
 include/
 *.lock
+aws/
 
 
 # React (frontend)
@@ -38,6 +39,7 @@ galleria-python/frontend/coverage/
 galleria-python/frontend/.env
 galleria-python/frontend/*.log
 galleria-python/frontend/.DS_Store
+frontend/node_modules
 
 # MacOS specific files
 .DS_Store

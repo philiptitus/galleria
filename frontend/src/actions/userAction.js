@@ -11,6 +11,10 @@ import {
     USER_DETAILS_SUCCESS,
     USER_DETAILS_RESET,
 
+    GOOGLE_LOGIN_FAIL,
+    GOOGLE_LOGIN_REQUEST,
+    GOOGLE_LOGIN_SUCCESS,
+
     PASSWORD_RESET_SUCCESS,
     PASSWORD_RESET_FAIL,
     PASSWORD_RESET_CONFIRM_SUCCESS,
@@ -90,7 +94,7 @@ export const verifyOtpAction = (otp) => async (dispatch, getState) => {
             }
         }
 
-    const { data } = await axios.post(`api/users/verify/`,{otp}, config);
+    const { data } = await axios.post(`/api/users/verify/`,{otp}, config);
 
         dispatch({
             type: VERIFY_NUMBER_SUCCESS,
@@ -106,6 +110,45 @@ export const verifyOtpAction = (otp) => async (dispatch, getState) => {
     }
 };
 
+
+
+export const googleauth = (auth_code) => async(dispatch, getState) => {
+    try{
+        dispatch({
+            type: GOOGLE_LOGIN_REQUEST
+
+        })
+
+        const config = {
+            headers: {
+                'Content-type': 'application/json'
+            }
+        }
+
+        const { data } = await axios.post(
+            `/api/users/google/`,
+            { 'auth_code': auth_code },
+            config
+        )
+    
+
+        dispatch({
+            type: GOOGLE_LOGIN_SUCCESS,
+            payload:data
+        })
+
+        localStorage.setItem('userInfo', JSON.stringify(data))
+
+
+    } catch (error) {
+        dispatch({
+            type: GOOGLE_LOGIN_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
 
 
 
@@ -133,7 +176,7 @@ export const getOtpAction = () => async (dispatch, getState) => {
 
 
 
-    const { data } = await axios.post(`api/users/getotp/`, 
+    const { data } = await axios.post(`/api/users/getotp/`, 
     {},
     config);
 
@@ -176,7 +219,7 @@ export const forgot_password = (email) => async dispatch => {
     };
 
 
-    const { data } = await axios.post(`api/users/password-reset/`, {email}, config);
+    const { data } = await axios.post(`/api/users/password-reset/`, {email}, config);
 
         dispatch({
             type: PASSWORD_RESET_SUCCESS,
@@ -615,7 +658,6 @@ export const updateUser = (user) => async(dispatch, getState) => {
         })
     }
 }
-
 
 
 

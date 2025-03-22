@@ -11,6 +11,47 @@ import Loader from '../components/Loader2';
 import {  Typography, Snackbar } from '@mui/material';
 
 
+const redirectToGoogle = () => {
+  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID; // Access Google Client ID from environment variables
+  const redirectUri = encodeURIComponent(process.env.REACT_APP_GOOGLE_REDIRECT_URI); // Access Redirect URI from environment variables
+  const googleLoginUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=openid%20email%20profile`;
+
+  // Redirect the user to Google's OAuth 2.0 endpoint
+  window.location.href = googleLoginUrl;
+};
+
+const buttonStyles = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '250px',
+  height: '50px',
+  border: 'none',
+  borderRadius: '8px',
+  fontSize: '16px',
+  fontWeight: 'bold',
+  cursor: 'pointer',
+  paddingLeft: '50px', // To ensure text does not overlap with logo
+  marginBottom: '4px', // Add margin between buttons
+};
+
+
+
+const googleButtonStyles = {
+  ...buttonStyles,
+  backgroundImage: 'url(https://www.svgrepo.com/show/475656/google-color.svg)',
+  backgroundRepeat: 'no-repeat',
+  backgroundSize: '20px',
+  backgroundPosition: '10px center',
+  backgroundColor: '#fff',
+  color: '#000',
+  border: '1px solid #ddd',
+};
+
+
+const buttonHover = {
+  filter: 'brightness(0.9)', // Darken button slightly on hover
+};
 
 
 function LoginScreen() {
@@ -221,7 +262,7 @@ function LoginScreen() {
   <form 
 onSubmit={submitHandler}
 
->            <h3 style={{ alignItems:"center", textAlign:"center", color:"white",     fontFamily: "'Georgia', 'Times New Roman', serif", }}>GALLERIA</h3>
+>           
 
 
 <Row className='justify-content-center'>
@@ -232,6 +273,14 @@ onSubmit={submitHandler}
     style={{ height:"52px", alignItems:"center" }}
     ></img>
     </Row>
+    <button
+        onClick={redirectToGoogle}
+        style={googleButtonStyles}
+        onMouseOver={(e) => (e.currentTarget.style.filter = buttonHover.filter)}
+        onMouseOut={(e) => (e.currentTarget.style.filter = 'none')}
+      >
+        Continue with Google
+      </button>
       <label htmlFor="chk" aria-hidden="true"  className='sign'>
         Sign up
       </label>
@@ -257,6 +306,14 @@ onSubmit={LoginHandler}
 >            <label htmlFor="chk" aria-hidden="true">
         Login
       </label>
+      <button
+        onClick={redirectToGoogle}
+        style={googleButtonStyles}
+        onMouseOver={(e) => (e.currentTarget.style.filter = buttonHover.filter)}
+        onMouseOut={(e) => (e.currentTarget.style.filter = 'none')}
+      >
+        Login with Google
+      </button>
       <input className="un" type="email" align="center" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
   <input className="pass" type="password" align="center" placeholder="Password" value={password}  onChange={(e) => setPassword(e.target.value)}/>
 <button className="submit" align="center" type='submit'>Login</button>

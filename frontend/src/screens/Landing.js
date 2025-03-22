@@ -1,8 +1,33 @@
-import React from 'react';
+import React, { useState } from "react";
 import { Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+import { useSnackbar } from 'notistack';
 
 const Landing = () => {
+
+
+    const dispatch = useDispatch();
+    const { enqueueSnackbar } = useSnackbar(); // useSnackbar hook
+  
+  const googleLogin = useSelector((state) => state.googleLogin);
+  const {  userInfo: googleInfo } = googleLogin;
+
+
+  React.useEffect(() => {
+    if (googleInfo) {
+
+
+      enqueueSnackbar("You have successfully signed in. ", { variant: 'success' })
+
+
+      window.location.reload();
+    }
+
+
+  }, [googleInfo,  enqueueSnackbar]);
+
+
   return (
 
 <div>
